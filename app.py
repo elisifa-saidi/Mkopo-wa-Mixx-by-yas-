@@ -42,7 +42,10 @@ def tuma_kwenye_telegram(app_id, data):
         "text": ujumbe
     })
 
-    print(response.text)
+    print("STATUS:", response.status_code)
+    print("RESPONSE:", response.text)
+
+    
 
 # =========================
 # HOME ROUTE
