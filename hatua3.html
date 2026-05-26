@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hatua ya 3 - Tuma Maombi</title>
+</head>
+<body>
+
+<h2>Hatua ya 3: Kuwasilisha Maombi</h2>
+
+<p>Bofya kitufe hapa chini kutuma maombi yako ya mkopo.</p>
+
+<button onclick="tumaMaombi()">Tuma Maombi</button>
+
+<script>
+function tumaMaombi() {
+
+    // PATA DATA YA HATUA YA 2
+    let mkopo = JSON.parse(localStorage.getItem("mkopo_data"));
+
+    if (!mkopo) {
+        alert("Hakuna taarifa za mkopo zilizopatikana");
+        return;
+    }
+
+    // TUMA KWENYE BACKEND
+    fetch("/submit-step3", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(mkopo)
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        alert("Maombi yamewasilishwa kwa mafanikio!");
+
+        // Hifadhi namba ya maombi
+        localStorage.setItem("app_id", data.application_id);
+
+        // Nenda Hatua ya 4
+        window.location.href = "hatua4.html";
+    })
+    .catch(err => {
+        alert("Hitilafu imetokea wakati wa kutuma maombi");
+        console.log(err);
+    });
+}
+</script>
+
+</body>
+</html>

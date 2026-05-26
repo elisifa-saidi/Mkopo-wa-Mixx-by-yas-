@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mkopo wa Mixx by Yas</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+        button {
+            background: green;
+            color: white;
+            border: none;
+        }
+
+        .result {
+            background: #f2f2f2;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        input[type=range] {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Mkopo wa Mixx by Yas</h2>
+
+<!-- JINA -->
+<input type="text" id="fullname" placeholder="Jina Kamili" required>
+
+<!-- LENGO -->
+<select id="purpose" required>
+    <option value="">Chagua Lengo la Mkopo</option>
+    <option value="biashara">Biashara</option>
+    <option value="ada">Ada</option>
+    <option value="matibabu">Matibabu</option>
+    <option value="nyingine">Nyingine</option>
+</select>
+
+<!-- MUDA -->
+<select id="duration" required>
+    <option value="">Chagua muda wa mkopo</option>
+    <option value="1">Mwezi 1</option>
+    <option value="3">Miezi 3</option>
+    <option value="6">Miezi 6</option>
+    <option value="12">Miezi 12</option>
+    <option value="24">Miezi 24</option>
+    <option value="36">Miezi 36</option>
+</select>
+
+<!-- 🔥 SLIDER LOAN CALCULATOR -->
+<div class="result">
+    Kiasi cha Mkopo: <b id="amountDisplay">30,000</b> TZS
+</div>
+
+<input 
+    type="range" 
+    id="loanSlider" 
+    min="30000" 
+    max="10000000" 
+    step="10000" 
+    value="30000"
+    oninput="updateAmount()"
+/>
+
+<button onclick="endeleaHatua1()">Endelea</button>
+
+<script>
+
+let selectedAmount = 30000;
+
+function updateAmount() {
+    selectedAmount = document.getElementById("loanSlider").value;
+    document.getElementById("amountDisplay").innerText =
+        Number(selectedAmount).toLocaleString();
+}
+
+function endeleaHatua1() {
+
+    let jina = document.getElementById("fullname").value;
+    let purpose = document.getElementById("purpose").value;
+    let duration = document.getElementById("duration").value;
+
+    if (!jina || !purpose || !duration) {
+        alert("Tafadhali jaza sehemu zote");
+        return;
+    }
+
+    let data = {
+        jina: jina,
+        lengo: purpose,
+        muda: duration,
+        kiasi: selectedAmount
+    };
+
+    localStorage.setItem("mkopo_data", JSON.stringify(data));
+
+    alert("Mkopo umehesabiwa kwa slider. Endelea hatua ya PIN.");
+
+    window.location.href = "hatua2.html";
+}
+
+</script>
+
+</body>
+</html>

