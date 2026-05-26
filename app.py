@@ -50,48 +50,19 @@ def tuma_kwenye_telegram(app_id, data):
 # =========================
 # HOME ROUTE
 # =========================
-@app.route("/")
-def home():
-    return "Backend Running Successfully"
-
-# =========================
-# STEP 3 ENDPOINT
-# =========================
 @app.route("/submit-step3", methods=["POST"])
 def submit_step3():
 
-    try:
+    data = request.get_json(silent=True) or request.form.to_dict()
 
-        data = request.get_json() or request.form.to_dict()
+    app_id = str(random.randint(10000, 99999))
 
-        if not data:
-            return jsonify({
-                "message": "No data received"
-            }), 400
+    maombi[app_id] = data
+    maombi[app_id]["status"] = "PENDING"
 
-        app_id = str(random.randint(10000, 99999))
+    tuma_kwenye_telegram(app_id, maombi[app_id])
 
-        maombi[app_id] = data
-        maombi[app_id]["status"] = "PENDING"
-
-        tuma_kwenye_telegram(app_id, maombi[app_id])
-
-        return jsonify({
-            "message": "Success",
-            "application_id": app_id
-        })
-
-    except Exception as e:
-
-        return jsonify({
-            "error": str(e)
-        }), 500
-
-# =========================
-# RUN APP
-# =========================
-if __name__ == "__main__":
-
-    port = int(os.environ.get("PORT", 5000))
-
-    app.run(host="0.0.0.0", port=port)
+    return {
+        "message": "Success",
+        "application_id": app_id
+    }
