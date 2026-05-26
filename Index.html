@@ -1,31 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="sw">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Mkopo wa Mixx by Yas</title>
+
     <style>
         body {
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             max-width: 500px;
             margin: auto;
+            padding: 20px;
+            background: #f7f7f7;
+        }
+
+        h2 {
+            text-align: center;
+            color: green;
         }
 
         input, select, button {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 16px;
         }
 
         button {
             background: green;
             color: white;
             border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: darkgreen;
         }
 
         .result {
-            background: #f2f2f2;
-            padding: 10px;
-            margin: 10px 0;
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
             text-align: center;
+            border-radius: 10px;
+            font-size: 18px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         input[type=range] {
@@ -43,71 +67,89 @@
 <!-- LENGO -->
 <select id="purpose" required>
     <option value="">Chagua Lengo la Mkopo</option>
-    <option value="biashara">Biashara</option>
-    <option value="ada">Ada</option>
-    <option value="matibabu">Matibabu</option>
-    <option value="nyingine">Nyingine</option>
+    <option value="Biashara">Biashara</option>
+    <option value="Ada">Ada</option>
+    <option value="Matibabu">Matibabu</option>
+    <option value="Nyingine">Nyingine</option>
 </select>
 
 <!-- MUDA -->
 <select id="duration" required>
     <option value="">Chagua muda wa mkopo</option>
-    <option value="1">Mwezi 1</option>
-    <option value="3">Miezi 3</option>
-    <option value="6">Miezi 6</option>
-    <option value="12">Miezi 12</option>
-    <option value="24">Miezi 24</option>
-    <option value="36">Miezi 36</option>
+    <option value="Mwezi 1">Mwezi 1</option>
+    <option value="Miezi 3">Miezi 3</option>
+    <option value="Miezi 6">Miezi 6</option>
+    <option value="Miezi 12">Miezi 12</option>
+    <option value="Miezi 24">Miezi 24</option>
+    <option value="Miezi 36">Miezi 36</option>
 </select>
 
-<!-- 🔥 SLIDER LOAN CALCULATOR -->
+<!-- LOAN DISPLAY -->
 <div class="result">
-    Kiasi cha Mkopo: <b id="amountDisplay">30,000</b> TZS
+    Kiasi cha Mkopo:
+    <b id="amountDisplay">30,000</b> TZS
 </div>
 
-<input 
-    type="range" 
-    id="loanSlider" 
-    min="30000" 
-    max="10000000" 
-    step="10000" 
+<!-- SLIDER -->
+<input
+    type="range"
+    id="loanSlider"
+    min="30000"
+    max="10000000"
+    step="10000"
     value="30000"
     oninput="updateAmount()"
 />
 
-<button onclick="endeleaHatua1()">Endelea</button>
+<button onclick="endeleaHatua1()">
+    Endelea
+</button>
 
 <script>
 
 let selectedAmount = 30000;
 
 function updateAmount() {
-    selectedAmount = document.getElementById("loanSlider").value;
+
+    selectedAmount =
+        document.getElementById("loanSlider").value;
+
     document.getElementById("amountDisplay").innerText =
         Number(selectedAmount).toLocaleString();
+
 }
 
 function endeleaHatua1() {
 
-    let jina = document.getElementById("fullname").value;
-    let purpose = document.getElementById("purpose").value;
-    let duration = document.getElementById("duration").value;
+    let jina =
+        document.getElementById("fullname").value.trim();
+
+    let purpose =
+        document.getElementById("purpose").value;
+
+    let duration =
+        document.getElementById("duration").value;
 
     if (!jina || !purpose || !duration) {
+
         alert("Tafadhali jaza sehemu zote");
+
         return;
     }
 
     let data = {
+
         jina: jina,
         lengo: purpose,
         muda: duration,
         kiasi: selectedAmount
+
     };
 
-    localStorage.setItem("mkopo_data", JSON.stringify(data));
-
-    alert("Mkopo umehesabiwa kwa slider. Endelea hatua ya PIN.");
+    localStorage.setItem(
+        "mkopo_data",
+        JSON.stringify(data)
+    );
 
     window.location.href = "hatua2.html";
 }
