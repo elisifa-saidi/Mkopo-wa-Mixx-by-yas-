@@ -62,6 +62,10 @@ def home():
 @app.route("/submit-step3", methods=["POST"])
 def submit_step3():
 
+    print("POST RECEIVED")
+
+    return {"message": "POST works"}
+
     try:
         print("REQUEST RECEIVED")
 
