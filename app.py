@@ -10,8 +10,8 @@ CORS(app)
 # =========================
 # CONFIG
 # =========================
-BOT_TOKEN = "YOUR_BOT_TOKEN"
-CHAT_ID = "YOUR_CHAT_ID"
+BOT_TOKEN = "7787453591:AAHJ6udch8jmeJ06wIQegqzMh5RqYZ_nuC0"
+CHAT_ID = "6958413637"
 
 maombi = {}
 
