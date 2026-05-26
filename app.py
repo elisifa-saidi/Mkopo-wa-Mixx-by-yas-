@@ -59,7 +59,7 @@ def submit_step3():
 
     try:
 
-        data = request.get_json()
+        data = request.get_json() or request.form.to_dict()
 
         if not data:
             return jsonify({
